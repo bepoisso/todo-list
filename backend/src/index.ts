@@ -1,5 +1,9 @@
 import fastify from "fastify";
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 
 import './db/db';
@@ -45,6 +49,35 @@ app.post('/register', async (request, reply) => {
 });
 
 // Route POST /login
+app.post('/login', async (request, reply) => {
+	const {email, password} = request.body as {email: string; password: string;};
+
+	// Validate input
+	if (!email || !password) {
+		return reply.status(400).send({error: 'Missing required fields'});
+	}
+
+	// Check if user exists
+	const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email);
+	if (!user) {
+		return reply.status(401).send({error: 'Invalid credentials'});
+	}
+
+	// Check if password the same
+	const verif = await bcrypt.compare(password, user.password_hash);
+	if (!verif)  {
+		return reply.status(401).send({error: 'Invalid credentials'});
+	}
+
+	// Create JWT token with user id
+	const jwtsecret = process.env.JWT_SECRET;
+	if (!jwtsecret) {
+		throw new Error('JWT_SECRET environment variable is not set');
+	}
+	const token = jwt.sign({userId: user.id}, jwtsecret, {expiresIn: '1h'});
+
+	return reply.send({token});
+});
 
 export default app;
 
