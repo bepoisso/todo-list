@@ -2,6 +2,10 @@
 
 🎯 **Final Goal**: Local app with separated frontend and backend, authentication (login/password + GitHub), SQLite database, clean interface, each user managing their private tasks.
 
+## Stack
+  nodejs, typescrip, tailwind css, fastify, sqlight
+
+
 ---
 
 ## 🧱 1. Initial Setup
