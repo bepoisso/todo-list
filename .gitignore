@@ -5,3 +5,5 @@ dist
 *test*
 .vscode
 .idea
+*.db
+
