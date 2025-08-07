@@ -37,10 +37,7 @@ app.post('/register', async (request, reply) => {
 
 	// insert user into the database
 	try {
-		await db.run(
-			'INSERT INTO users (username, email, passwordHash) VALUES (?, ?, ?)',
-			[username, email, passwordHash]
-		);
+		db.prepare('INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)').run(username, email, passwordHash);
 		return reply.status(201).send({message: 'User registered successfully'});
 	} catch (err) {
 		return reply.status(400).send({message: 'User already exists'});
