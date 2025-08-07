@@ -30,7 +30,7 @@
 ## 🔐 4. Authentication
 - [x] Create a `users` table in SQLite: `id`, `username`, `email`, `password_hash`
 - [x] Implement registration (`POST /register`)
-- [ ] Implement login (`POST /login`) with JWT (token) generation
+- [x] Implement login (`POST /login`) with JWT (token) generation
 - [ ] Middleware to protect private routes (authentication required)
 - [ ] Integrate **GitHub OAuth** for GitHub login
 

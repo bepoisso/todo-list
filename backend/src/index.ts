@@ -7,7 +7,9 @@ dotenv.config();
 
 
 import './db/db';
+import { signToken } from './auth';
 import { REPL_MODE_SLOPPY } from "repl";
+import { verifyAuth } from './auth';
 
 
 const app = fastify();
@@ -74,8 +76,7 @@ app.post('/login', async (request, reply) => {
 	if (!jwtsecret) {
 		throw new Error('JWT_SECRET environment variable is not set');
 	}
-	const token = jwt.sign({userId: user.id}, jwtsecret, {expiresIn: '1h'});
-
+	const token = signToken({ id: user.id, username: user.username });
 	return reply.send({token});
 });
 
