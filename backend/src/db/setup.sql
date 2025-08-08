@@ -3,8 +3,9 @@ DROP TABLE IF EXISTS users;
 CREATE TABLE users (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	username TEXT NOT NULL UNIQUE,
-	email TEXT NOT NULL UNIQUE,
-	password_hash TEXT NOT NULL
+	email TEXT,
+	password_hash TEXT,
+	github_id TEXT UNIQUE
 );
 
 DROP TABLE IF EXISTS tasks;

@@ -37,10 +37,10 @@
 ## 🗃️ 5. Tasks - CRUD
 - [x] Create a `tasks` table:
   - `id`, `title`, `description`, `is_done`, `user_id`
-- [ ] Route `GET /tasks`: fetch tasks for the authenticated user
-- [ ] Route `POST /tasks`: add a new task
-- [ ] Route `PUT /tasks/:id`: update a task
-- [ ] Route `DELETE /tasks/:id`: delete a task
+- [x] Route `GET /tasks`: fetch tasks for the authenticated user
+- [x] Route `POST /tasks`: add a new task
+- [x] Route `PUT /tasks/:id`: update a task
+- [x] Route `DELETE /tasks/:id`: delete a task
 
 ## 🌐 6. Frontend - HTML + Tailwind + TypeScript
 - [ ] Initialize frontend in `/frontend`

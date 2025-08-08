@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import './db/db';
+import githubRoutes from './github';
 
 dotenv.config();
 
@@ -200,6 +201,8 @@ app.delete('/task', {preHandler: verifyAuth}, async (request, reply) => {
 		return reply.status(500).send({error: 'Server error'});
 	}
 });
+
+githubRoutes(app);
 
 export default app;
 
