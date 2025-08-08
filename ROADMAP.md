@@ -31,11 +31,11 @@
 - [x] Create a `users` table in SQLite: `id`, `username`, `email`, `password_hash`
 - [x] Implement registration (`POST /register`)
 - [x] Implement login (`POST /login`) with JWT (token) generation
-- [ ] Middleware to protect private routes (authentication required)
+- [x] Middleware to protect private routes (authentication required)
 - [ ] Integrate **GitHub OAuth** for GitHub login
 
 ## 🗃️ 5. Tasks - CRUD
-- [ ] Create a `tasks` table:
+- [x] Create a `tasks` table:
   - `id`, `title`, `description`, `is_done`, `user_id`
 - [ ] Route `GET /tasks`: fetch tasks for the authenticated user
 - [ ] Route `POST /tasks`: add a new task

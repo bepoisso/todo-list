@@ -2,13 +2,12 @@ import fastify from "fastify";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import './db/db';
 
 dotenv.config();
 
-
-import './db/db';
-import { signToken } from './auth';
 import { REPL_MODE_SLOPPY } from "repl";
+import { signToken } from './auth';
 import { verifyAuth } from './auth';
 
 
@@ -78,6 +77,11 @@ app.post('/login', async (request, reply) => {
 	}
 	const token = signToken({ id: user.id, username: user.username });
 	return reply.send({token});
+});
+
+app.get('/task', { preHandler: verifyAuth }, async (request, reply) => {
+	const user = (request as any).user;
+	return reply.send(`Welcome ${user.username}, there is your tasks.`);
 });
 
 export default app;
