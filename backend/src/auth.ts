@@ -27,7 +27,7 @@ export function verifyAuth(request: FastifyRequest, reply: FastifyReply, done: F
 		}
 		const decoded = jwt.verify(token, jwtsecret) as { id: number; username: string };
 		
-		// Attacher l'utilisateur à la requête
+		// Attach the user to the request
 		(request as any).user = decoded;
 		
 		done();

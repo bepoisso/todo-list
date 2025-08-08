@@ -7,6 +7,7 @@ import './db/db';
 dotenv.config();
 
 import { REPL_MODE_SLOPPY } from "repl";
+import { FastifyInstance } from "fastify";
 import { signToken } from './auth';
 import { verifyAuth } from './auth';
 
@@ -79,10 +80,51 @@ app.post('/login', async (request, reply) => {
 	return reply.send({token});
 });
 
+// Get tasks
 app.get('/task', { preHandler: verifyAuth }, async (request, reply) => {
+	// Middleware verif
 	const user = (request as any).user;
-	return reply.send(`Welcome ${user.username}, there is your tasks.`);
+	
+	try {
+	// Request SQL to get tasks
+		const tasks = db.prepare('\
+			SELECT id, title, description, is_done\
+			FROM tasks\
+			WHERE user_id = ?').all(user.id);
+
+			return reply.send({user: user.username, tasks});
+		} catch (err) {
+			return reply.status(500).send({error: 'Server error'});
+		}
 });
+
+// Add task into DB
+app.post('/task', {preHandler: verifyAuth}, async (request, reply) => {
+	const user = (request as any).user;
+
+	try {
+		const {title, description} = request.body as  {
+			title: string;
+			description: string;
+		};
+
+		if (!title) {
+			return reply.status(400).send({error: 'Title is requierd'});
+		}
+
+		// SQL command to add task
+		db.prepare('\
+			INSERT INTO tasks (title, description, user_id)\
+			VALUES (?, ?, ?)\
+			').run(title, description || '', user.id);
+
+			return reply.status(201).send({message: 'Task successfully add'});
+	} catch (err) {
+		console.error(err);
+		return reply.status(500).send({error: 'Server error'});
+	}
+});
+
 
 export default app;
 
