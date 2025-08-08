@@ -125,6 +125,81 @@ app.post('/task', {preHandler: verifyAuth}, async (request, reply) => {
 	}
 });
 
+// Update a task
+app.put('/task', {preHandler: verifyAuth}, async (request, reply) => {
+	const user = (request as any).user;
+
+	try {
+		const id = (request.query as any).id as string;
+		if (!id) {
+			return reply.status(400).send({error: 'Missing task ID'});
+		}
+		
+		const {title, description, is_done} = request.body as {
+			title: string;
+			description: string;
+			is_done: boolean;
+		};
+
+		// Check if the task exists and belongs to the user
+		const task = db.prepare('\
+			SELECT * FROM tasks WHERE id = ? AND user_id = ?\
+			').get(id, user.id);
+
+		if (!task) {
+			return reply.status(404).send({error: 'Task not found'});
+		}
+		// Update the task
+		const updateTitle = title !== undefined ? title : null;
+		const updateDescription = description !== undefined ? description : null;
+		const updateIsDone =
+			typeof is_done === 'boolean' ? (is_done ? 1 : 0) :
+			is_done !== undefined ? is_done : null;
+
+		db.prepare('\
+			UPDATE tasks\
+			SET title = COALESCE(?, title),\
+				description = COALESCE(?, description),\
+				is_done = COALESCE(?, is_done)\
+			WHERE id = ? AND user_id = ?\
+		').run(updateTitle, updateDescription, updateIsDone, id, user.id);
+
+		return reply.send({message: 'Task update successfully'});
+	} catch (err) {
+		console.error(err);
+		return reply.status(500).send({error: 'Server error'});
+	}
+});
+
+app.delete('/task', {preHandler: verifyAuth}, async (request, reply) => {
+	const user = (request as any).user;
+
+	try {
+		const id = (request.query as any).id as string;
+		if (!id) {
+			return reply.status(400).send({error: 'Missing task ID'});
+		}
+
+		// Check that the task exists and belongs to the user
+		const task = db.prepare('\
+			SELECT * FROM tasks WHERE id = ? AND user_id = ?\
+			').get(id, user.id);
+		
+		if (!task) {
+			return reply.status(404).send({error: 'Task not found'})
+		}
+
+		// Delete task from db
+		db.prepare('\
+			DELETE FROM tasks WHERE id = ? AND user_id = ?\
+			').run(id, user.id);
+
+		return reply.send({message: 'Task successfully deleted'});
+	} catch (err) {
+		console.error(err);
+		return reply.status(500).send({error: 'Server error'});
+	}
+});
 
 export default app;
 
