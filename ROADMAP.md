@@ -32,7 +32,7 @@
 - [x] Implement registration (`POST /register`)
 - [x] Implement login (`POST /login`) with JWT (token) generation
 - [x] Middleware to protect private routes (authentication required)
-- [ ] Integrate **GitHub OAuth** for GitHub login
+- [x] Integrate **GitHub OAuth** for GitHub login
 
 ## 🗃️ 5. Tasks - CRUD
 - [x] Create a `tasks` table:
