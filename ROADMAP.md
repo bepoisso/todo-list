@@ -43,9 +43,9 @@
 - [x] Route `DELETE /tasks/:id`: delete a task
 
 ## 🌐 6. Frontend - HTML + Tailwind + TypeScript
-- [ ] Initialize frontend in `/frontend`
-- [ ] Setup Tailwind CSS
-- [ ] Create pages:
+- [x] Initialize frontend in `/frontend`
+- [x] Setup Tailwind CSS
+- [x] Create pages:
   - [ ] Login page
   - [ ] Register page
   - [ ] Main task list page
