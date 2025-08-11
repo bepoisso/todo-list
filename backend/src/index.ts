@@ -2,7 +2,7 @@ import fastify from "fastify";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-import './db/db';
+import db from './db/db';
 import githubRoutes from './github';
 
 dotenv.config();
@@ -11,10 +11,21 @@ import { REPL_MODE_SLOPPY } from "repl";
 import { FastifyInstance } from "fastify";
 import { signToken } from './auth';
 import { verifyAuth } from './auth';
+import { User, Task } from './types/db';
 
+const app = fastify({
+  logger: true  // Add logging for better debugging
+});
 
-const app = fastify();
-const db = require('./db/db').default;
+// Add content-type parser for JSON
+app.addContentTypeParser('application/json', { parseAs: 'string' }, function (req, body, done) {
+  try {
+    const json = JSON.parse(body as string);
+    done(null, json);
+  } catch (err) {
+    done(err as Error, undefined);
+  }
+});
 
 // Route GET /ping
 app.get('/ping', async (request, reply) => {
@@ -61,13 +72,13 @@ app.post('/login', async (request, reply) => {
 	}
 
 	// Check if user exists
-	const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email);
+	const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email) as User;
 	if (!user) {
 		return reply.status(401).send({error: 'Invalid credentials'});
 	}
 
 	// Check if password the same
-	const verif = await bcrypt.compare(password, user.password_hash);
+	const verif = await bcrypt.compare(password, user.password_hash || '');
 	if (!verif)  {
 		return reply.status(401).send({error: 'Invalid credentials'});
 	}

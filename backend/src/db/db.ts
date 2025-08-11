@@ -5,8 +5,9 @@ import path from 'path';
 // Define the path to the database file
 const setupSQL = fs.readFileSync(path.join(__dirname, 'setup.sql'), 'utf-8');
 
-// Create and open the SQLite database
-const db = new Database('database.db');
+// Create and open the SQLite database with an absolute path
+const dbPath = path.join(__dirname, '../../database.db');
+const db = new Database(dbPath);
 
 // Apply setup only if tables don't exist
 const tableExists = db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='users'").get();

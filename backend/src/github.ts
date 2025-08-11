@@ -1,11 +1,11 @@
 import { FastifyInstance } from "fastify";
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-import './db/db';
+import db from './db/db';
 import { signToken } from './auth';
+import { User } from './types/db';
 
 dotenv.config();
-const db = require('./db/db').default;
 
 export default async function githubRoutes(app: FastifyInstance) {
     app.get('/auth/github', async (request, reply) => {
@@ -46,10 +46,10 @@ export default async function githubRoutes(app: FastifyInstance) {
         const githubUser = await userResponse.json() as { id: number, login: string };
 
         // Register or signin user
-        let user = db.prepare('SELECT * FROM users WHERE github_id = ?').get(githubUser.id);
+        let user = db.prepare('SELECT * FROM users WHERE github_id = ?').get(githubUser.id) as User | undefined;
         if (!user) {
             db.prepare('INSERT INTO users (github_id, username) VALUES (?, ?)').run(githubUser.id, githubUser.login);
-            user = db.prepare('SELECT * FROM users WHERE github_id = ?').get(githubUser.id);
+            user = db.prepare('SELECT * FROM users WHERE github_id = ?').get(githubUser.id) as User;
         }
 
         // Create a JWT token for user
