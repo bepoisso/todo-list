@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import db from './db/db';
 import githubRoutes from './github';
+import cors from '@fastify/cors';
 
 dotenv.config();
 
@@ -14,17 +15,24 @@ import { verifyAuth } from './auth';
 import { User, Task } from './types/db';
 
 const app = fastify({
-  logger: true  // Add logging for better debugging
+logger: true  // Add logging for better debugging
+});
+
+app.register(cors, {
+  origin: true, // Allow any origin in development
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization']
 });
 
 // Add content-type parser for JSON
 app.addContentTypeParser('application/json', { parseAs: 'string' }, function (req, body, done) {
-  try {
-    const json = JSON.parse(body as string);
-    done(null, json);
-  } catch (err) {
-    done(err as Error, undefined);
-  }
+	try {
+		const json = JSON.parse(body as string);
+		done(null, json);
+	} catch (err) {
+		done(err as Error, undefined);
+	}
 });
 
 // Route GET /ping
@@ -89,6 +97,7 @@ app.post('/login', async (request, reply) => {
 		throw new Error('JWT_SECRET environment variable is not set');
 	}
 	const token = signToken({ id: user.id, username: user.username });
+	console.log("Success login");
 	return reply.send({token});
 });
 
